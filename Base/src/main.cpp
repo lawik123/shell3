@@ -7,23 +7,27 @@
 #include "MyVisitor.h"
 
 int main() {
-	std::cout << "Hello, World!" << std::endl;
+    std::cout << "Hello, World!" << std::endl;
 
-	// Read some line of input....
-	std::string input = "someInputLine";
+    // Read some line of input....
+    std::string input = "";
 
-	// Create input stream, create lexer and use lexer to create stream of tokens
-	antlr4::ANTLRInputStream inputStream(input);
-	ShellGrammarLexer lexer(&inputStream);
-	antlr4::CommonTokenStream tokens(&lexer);
+    while(true) {
+        std::getline(std::cin, input);
 
-	// Create parser
-	ShellGrammarParser parser(&tokens);
-	antlr4::tree::ParseTree *parseTree = parser.program();
+        // Create input stream, create lexer and use lexer to create stream of tokens
+        antlr4::ANTLRInputStream inputStream(input);
+        ShellGrammarLexer lexer(&inputStream);
+        antlr4::CommonTokenStream tokens(&lexer);
 
-//	 Then, visit your tree
-//	 MyVisitor visitor;
-//	 visitor.visit(parseTree);
+        // Create parser
+        ShellGrammarParser parser(&tokens);
+        antlr4::tree::ParseTree *parseTree = parser.program();
 
-	return 0;
+        // Then, visit your tree
+        MyVisitor visitor;
+        visitor.visit(parseTree);
+    }
+
+    return 0;
 }
