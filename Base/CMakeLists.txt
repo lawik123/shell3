@@ -305,8 +305,9 @@ set(SOURCE_FILES
     runtime/src/WritableToken.h	
 
     src/main.cpp
+        ShellGrammar.g4
 
-)
+        src/MyVisitor.cpp src/MyVisitor.h)
 
 include_directories(
         runtime/src

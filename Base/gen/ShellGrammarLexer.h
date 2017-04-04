@@ -12,7 +12,8 @@
 class  ShellGrammarLexer : public antlr4::Lexer {
 public:
   enum {
-    STRING = 1
+    T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, STRING = 7, 
+    WS = 8
   };
 
   ShellGrammarLexer(antlr4::CharStream *input);

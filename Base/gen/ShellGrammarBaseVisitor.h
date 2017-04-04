@@ -15,7 +15,43 @@
 class  ShellGrammarBaseVisitor : public ShellGrammarVisitor {
 public:
 
-  virtual antlrcpp::Any visitCommand(ShellGrammarParser::CommandContext *ctx) override {
+  virtual antlrcpp::Any visitProgram(ShellGrammarParser::ProgramContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitGetDirExpression(ShellGrammarParser::GetDirExpressionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitChangeDirExpression(ShellGrammarParser::ChangeDirExpressionContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitGetDir(ShellGrammarParser::GetDirContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitChangeDir(ShellGrammarParser::ChangeDirContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitExecCommands(ShellGrammarParser::ExecCommandsContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitPath(ShellGrammarParser::PathContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitDirName(ShellGrammarParser::DirNameContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitFileName(ShellGrammarParser::FileNameContext *ctx) override {
     return visitChildren(ctx);
   }
 
