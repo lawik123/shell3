@@ -31,11 +31,18 @@ antlrcpp::Any MyVisitor::visitDirName(ShellGrammarParser::DirNameContext *ctx) {
 
 //execute commands
 antlrcpp::Any MyVisitor::visitExecCommands(ShellGrammarParser::ExecCommandsContext *ctx) {
-    std::string fileName = ctx->file->getText();
+    int cid = fork();
 
-    char* arg[] = {(char *) fileName.c_str(), NULL};
-    execvp(arg[0], arg);
-    return ShellGrammarBaseVisitor::visitExecCommands(ctx);
+    if(cid == 0) {
+        std::string fileName = ctx->file->getText();
+        char *arg[] = {(char *) fileName.c_str(), NULL};
+        execvp(arg[0], arg);
+    } else if(cid > 0) {
+
+    } else {
+        printf("Error in fork()");
+    }
+    return nullptr;
 }
 
 //IO commands
