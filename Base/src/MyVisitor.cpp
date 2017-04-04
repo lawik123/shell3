@@ -35,7 +35,11 @@ antlrcpp::Any MyVisitor::visitExecCommands(ShellGrammarParser::ExecCommandsConte
 
     if(cid == 0) {
         std::string fileName = ctx->file->getText();
-        char *arg[] = {(char *) fileName.c_str(), NULL};
+        char *arg[] = {(char *) fileName.c_str()};
+        for( int i = 0; i < ctx->arguments().size(); i++) {
+            arg[i + 1] = (char *) ctx->arguments()[i]->getText().c_str();
+        }
+        arg[ctx->arguments().size() + 1] = NULL;
         execvp(arg[0], arg);
     } else if(cid > 0) {
 

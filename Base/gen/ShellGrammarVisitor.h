@@ -35,6 +35,8 @@ public:
 
     virtual antlrcpp::Any visitPath(ShellGrammarParser::PathContext *context) = 0;
 
+    virtual antlrcpp::Any visitArguments(ShellGrammarParser::ArgumentsContext *context) = 0;
+
     virtual antlrcpp::Any visitDirName(ShellGrammarParser::DirNameContext *context) = 0;
 
     virtual antlrcpp::Any visitFileName(ShellGrammarParser::FileNameContext *context) = 0;

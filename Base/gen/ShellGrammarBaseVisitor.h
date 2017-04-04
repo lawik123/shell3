@@ -47,6 +47,10 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitArguments(ShellGrammarParser::ArgumentsContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitDirName(ShellGrammarParser::DirNameContext *ctx) override {
     return visitChildren(ctx);
   }
