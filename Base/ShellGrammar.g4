@@ -16,7 +16,7 @@ ioCommands:;
 path: dirName+ | '..';
 
 dirName: STRING | '/';
-fileName: STRING;
+fileName: ('./')? STRING;
 STRING: [A-Za-z]+;
 
 WS: [ \n\t\r]+ -> skip;

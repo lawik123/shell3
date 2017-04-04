@@ -33,8 +33,8 @@ antlrcpp::Any MyVisitor::visitDirName(ShellGrammarParser::DirNameContext *ctx) {
 antlrcpp::Any MyVisitor::visitExecCommands(ShellGrammarParser::ExecCommandsContext *ctx) {
     std::string fileName = ctx->file->getText();
 
-    char* arg[] = {"ls",NULL};
-    execvp("ls", arg);
+    char* arg[] = {(char *) fileName.c_str(), NULL};
+    execvp(arg[0], arg);
     return ShellGrammarBaseVisitor::visitExecCommands(ctx);
 }
 
