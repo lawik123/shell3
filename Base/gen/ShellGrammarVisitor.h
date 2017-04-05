@@ -35,11 +35,15 @@ public:
 
     virtual antlrcpp::Any visitOutputCommand(ShellGrammarParser::OutputCommandContext *context) = 0;
 
+    virtual antlrcpp::Any visitErrorCommand(ShellGrammarParser::ErrorCommandContext *context) = 0;
+
     virtual antlrcpp::Any visitPath(ShellGrammarParser::PathContext *context) = 0;
 
     virtual antlrcpp::Any visitInput(ShellGrammarParser::InputContext *context) = 0;
 
     virtual antlrcpp::Any visitOutput(ShellGrammarParser::OutputContext *context) = 0;
+
+    virtual antlrcpp::Any visitError(ShellGrammarParser::ErrorContext *context) = 0;
 
     virtual antlrcpp::Any visitArguments(ShellGrammarParser::ArgumentsContext *context) = 0;
 

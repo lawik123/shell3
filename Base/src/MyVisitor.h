@@ -23,6 +23,8 @@ public:
     antlrcpp::Any visitChangeDir(ShellGrammarParser::ChangeDirContext *ctx) override;
 
     antlrcpp::Any visitDirName(ShellGrammarParser::DirNameContext *ctx) override;
+
+    antlrcpp::Any visitErrorCommand(ShellGrammarParser::ErrorCommandContext *ctx) override;
 };
 
 
