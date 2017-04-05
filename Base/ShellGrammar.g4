@@ -15,8 +15,8 @@ ioCommands: inputCommand
 | outputCommand;
 //| errorCommand;
 
-inputCommand: execCommands ' < ' inputfile=input;
-outputCommand: 'execvp' ' ' file=programName (' ' arg=arguments)* ' > ' outputfile=output;
+inputCommand: 'execvp' ' ' file=programName (' ' arg=arguments)* ' < ' inputfile=input;
+outputCommand: 'execvp' ' ' file=programName (' ' arg=arguments)* op=(' > ' | ' >> ') outputfile=output;
 //errorCommand: program ' < ' file;
 
 

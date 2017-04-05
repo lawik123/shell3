@@ -13,7 +13,7 @@ class  ShellGrammarParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    T__7 = 8, T__8 = 9, T__9 = 10, STRING = 11, WS = 12
+    T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, STRING = 12, WS = 13
   };
 
   enum {
@@ -130,11 +130,15 @@ public:
 
   class  InputCommandContext : public antlr4::ParserRuleContext {
   public:
+    ShellGrammarParser::ProgramNameContext *file = nullptr;;
+    ShellGrammarParser::ArgumentsContext *arg = nullptr;;
     ShellGrammarParser::InputContext *inputfile = nullptr;;
     InputCommandContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    ExecCommandsContext *execCommands();
+    ProgramNameContext *programName();
     InputContext *input();
+    std::vector<ArgumentsContext *> arguments();
+    ArgumentsContext* arguments(size_t i);
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
@@ -146,6 +150,7 @@ public:
   public:
     ShellGrammarParser::ProgramNameContext *file = nullptr;;
     ShellGrammarParser::ArgumentsContext *arg = nullptr;;
+    antlr4::Token *op = nullptr;;
     ShellGrammarParser::OutputContext *outputfile = nullptr;;
     OutputCommandContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
