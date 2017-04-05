@@ -19,11 +19,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitGetDirExpression(ShellGrammarParser::GetDirExpressionContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitChangeDirExpression(ShellGrammarParser::ChangeDirExpressionContext *ctx) override {
+  virtual antlrcpp::Any visitDirCommands(ShellGrammarParser::DirCommandsContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -43,7 +39,23 @@ public:
     return visitChildren(ctx);
   }
 
+  virtual antlrcpp::Any visitInputCommand(ShellGrammarParser::InputCommandContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitOutputCommand(ShellGrammarParser::OutputCommandContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
   virtual antlrcpp::Any visitPath(ShellGrammarParser::PathContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitInput(ShellGrammarParser::InputContext *ctx) override {
+    return visitChildren(ctx);
+  }
+
+  virtual antlrcpp::Any visitOutput(ShellGrammarParser::OutputContext *ctx) override {
     return visitChildren(ctx);
   }
 
@@ -55,7 +67,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitFileName(ShellGrammarParser::FileNameContext *ctx) override {
+  virtual antlrcpp::Any visitProgramName(ShellGrammarParser::ProgramNameContext *ctx) override {
     return visitChildren(ctx);
   }
 

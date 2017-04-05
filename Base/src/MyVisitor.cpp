@@ -1,6 +1,7 @@
 
 #include <unistd.h>
 #include <pwd.h>
+#include <fcntl.h>
 #include "MyVisitor.h"
 
 antlrcpp::Any MyVisitor::visitProgram(ShellGrammarParser::ProgramContext *ctx) {
@@ -8,9 +9,7 @@ antlrcpp::Any MyVisitor::visitProgram(ShellGrammarParser::ProgramContext *ctx) {
 }
 
 //directory commands
-antlrcpp::Any MyVisitor::visitGetDirExpression(ShellGrammarParser::GetDirExpressionContext *ctx) {
-    return ShellGrammarBaseVisitor::visitGetDirExpression(ctx);
-}
+
 
 antlrcpp::Any MyVisitor::visitGetDir(ShellGrammarParser::GetDirContext *ctx) {
     char buff[PATH_MAX];
@@ -20,9 +19,6 @@ antlrcpp::Any MyVisitor::visitGetDir(ShellGrammarParser::GetDirContext *ctx) {
     return nullptr;
 }
 
-antlrcpp::Any MyVisitor::visitChangeDirExpression(ShellGrammarParser::ChangeDirExpressionContext *ctx) {
-    return ShellGrammarBaseVisitor::visitChangeDirExpression(ctx);
-}
 
 
 antlrcpp::Any MyVisitor::visitDirName(ShellGrammarParser::DirNameContext *ctx) {
@@ -50,13 +46,45 @@ antlrcpp::Any MyVisitor::visitExecCommands(ShellGrammarParser::ExecCommandsConte
 }
 
 //IO commands
-antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) {
-    return ShellGrammarBaseVisitor::visitIoCommands(ctx);
-}
 
 antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ctx) {
     std::string path = ctx->dirPath->getText();
     chdir(path.c_str());
 
     return ShellGrammarBaseVisitor::visitChangeDir(ctx);
+}
+
+
+antlrcpp::Any MyVisitor::visitInputCommand(ShellGrammarParser::InputCommandContext *ctx) {
+
+    return ShellGrammarBaseVisitor::visitInputCommand(ctx);
+}
+
+antlrcpp::Any MyVisitor::visitOutputCommand(ShellGrammarParser::OutputCommandContext *ctx) {
+
+        int fd = open(ctx->outputfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
+        if(fd == -1) {
+             perror("error");
+             return EXIT_FAILURE;
+         }
+
+         fclose(stdout);
+         dup2(fd, STDOUT_FILENO);
+         close(fd);
+
+    int cid = fork();
+
+    if(cid == 0) {
+        std::string fileName = ctx->file->getText();
+        char *arg[] = {(char *) fileName.c_str()};
+        for (int i = 0; i < ctx->arguments().size(); i++) {
+            arg[i + 1] = (char *) ctx->arguments()[i]->getText().c_str();
+        }
+        arg[ctx->arguments().size() + 1] = NULL;
+
+        execvp(arg[0], arg);
+
+        exit(-1);
+    }
+    return nullptr;
 }

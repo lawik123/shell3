@@ -21,9 +21,7 @@ public:
    */
     virtual antlrcpp::Any visitProgram(ShellGrammarParser::ProgramContext *context) = 0;
 
-    virtual antlrcpp::Any visitGetDirExpression(ShellGrammarParser::GetDirExpressionContext *context) = 0;
-
-    virtual antlrcpp::Any visitChangeDirExpression(ShellGrammarParser::ChangeDirExpressionContext *context) = 0;
+    virtual antlrcpp::Any visitDirCommands(ShellGrammarParser::DirCommandsContext *context) = 0;
 
     virtual antlrcpp::Any visitGetDir(ShellGrammarParser::GetDirContext *context) = 0;
 
@@ -33,13 +31,21 @@ public:
 
     virtual antlrcpp::Any visitIoCommands(ShellGrammarParser::IoCommandsContext *context) = 0;
 
+    virtual antlrcpp::Any visitInputCommand(ShellGrammarParser::InputCommandContext *context) = 0;
+
+    virtual antlrcpp::Any visitOutputCommand(ShellGrammarParser::OutputCommandContext *context) = 0;
+
     virtual antlrcpp::Any visitPath(ShellGrammarParser::PathContext *context) = 0;
+
+    virtual antlrcpp::Any visitInput(ShellGrammarParser::InputContext *context) = 0;
+
+    virtual antlrcpp::Any visitOutput(ShellGrammarParser::OutputContext *context) = 0;
 
     virtual antlrcpp::Any visitArguments(ShellGrammarParser::ArgumentsContext *context) = 0;
 
     virtual antlrcpp::Any visitDirName(ShellGrammarParser::DirNameContext *context) = 0;
 
-    virtual antlrcpp::Any visitFileName(ShellGrammarParser::FileNameContext *context) = 0;
+    virtual antlrcpp::Any visitProgramName(ShellGrammarParser::ProgramNameContext *context) = 0;
 
 
 };
