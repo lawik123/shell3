@@ -53,31 +53,47 @@ antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ct
     return ShellGrammarBaseVisitor::visitChangeDir(ctx);
 }
 
-antlrcpp::Any MyVisitor::visitErrorCommand(ShellGrammarParser::ErrorCommandContext *ctx) {
+antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) {
     int cid = fork();
 
+
+
+
     if (cid == 0) {
-        int in = open(ctx->inputfile->getText().c_str(), O_RDONLY);
-        int err = open(ctx->errorfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
-        int out;
-        if (ctx->op->getText() == " > ") {
-            out = open(ctx->outputfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
-        } else {
-            out = open(ctx->outputfile->getText().c_str(), O_APPEND | O_WRONLY, 0777);
-        }
-        if (in == -1 || out == -1 || err == -1) {
-            perror("error");
-            return EXIT_FAILURE;
+        if(ctx->inOp != nullptr) {
+            int in = open(ctx->inputfile->getText().c_str(), O_RDONLY);
+            if (in == -1) {
+                perror("error");
+                return EXIT_FAILURE;
+            }
+            dup2(in, STDIN_FILENO);
+            close(in);
         }
 
-        fclose(stdin);
-        dup2(in, STDIN_FILENO);
-        dup2(out, STDOUT_FILENO);
-        dup2(err, STDERR_FILENO);
+        if(ctx->errOp != nullptr) {
+            int err = open(ctx->errorfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
+            if (err == -1) {
+                perror("error");
+                return EXIT_FAILURE;
+            }
+            dup2(err, STDERR_FILENO);
+            close(err);
+        }
 
-        close(in);
-        close(out);
-        close(err);
+        if(ctx->outOp != nullptr) {
+            int out;
+            if (ctx->outOp->getText() == " > ") {
+                out = open(ctx->outputfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
+            } else {
+                out = open(ctx->outputfile->getText().c_str(), O_APPEND | O_WRONLY, 0777);
+            }
+            if (out == -1) {
+                perror("error");
+                return EXIT_FAILURE;
+            }
+            dup2(out, STDOUT_FILENO);
+            close(out);
+        }
 
         std::string fileName = ctx->file->getText();
         char *arg[] = {(char *) fileName.c_str()};
@@ -90,78 +106,11 @@ antlrcpp::Any MyVisitor::visitErrorCommand(ShellGrammarParser::ErrorCommandConte
 
         exit(-1);
     } else if (cid > 0) {
-        //TODO error
+        //parent do nothing
 
     } else {
         printf("Error in fork()");
     }
-
-    return nullptr;
+    return ShellGrammarBaseVisitor::visitIoCommands(ctx);
 }
 
-antlrcpp::Any MyVisitor::visitInputCommand(ShellGrammarParser::InputCommandContext *ctx) {
-    int cid = fork();
-
-    if (cid == 0) {
-        int fd = open(ctx->inputfile->getText().c_str(), O_RDONLY);
-        if (fd == -1) {
-            perror("error");
-            return EXIT_FAILURE;
-        }
-
-        fclose(stdin);
-        dup2(fd, STDIN_FILENO);
-        close(fd);
-
-        std::string fileName = ctx->file->getText();
-        char *arg[] = {(char *) fileName.c_str()};
-        for (int i = 0; i < ctx->arguments().size(); i++) {
-            arg[i + 1] = (char *) ctx->arguments()[i]->getText().c_str();
-        }
-        arg[ctx->arguments().size() + 1] = NULL;
-
-        execvp(arg[0], arg);
-
-        exit(-1);
-    } else if (cid > 0) {
-
-    } else {
-        printf("Error in fork()");
-    }
-
-    return nullptr;
-}
-
-antlrcpp::Any MyVisitor::visitOutputCommand(ShellGrammarParser::OutputCommandContext *ctx) {
-    int cid = fork();
-
-    if (cid == 0) {
-        int fd;
-        if (ctx->op->getText() == " > ") {
-            fd = open(ctx->outputfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
-        } else {
-            fd = open(ctx->outputfile->getText().c_str(), O_APPEND | O_WRONLY, 0777);
-
-        }
-        if (fd == -1) {
-            perror("error");
-            return EXIT_FAILURE;
-        }
-
-        fclose(stdout);
-        dup2(fd, STDOUT_FILENO);
-        close(fd);
-
-        std::string fileName = ctx->file->getText();
-        char *arg[] = {(char *) fileName.c_str()};
-        for (int i = 0; i < ctx->arguments().size(); i++) {
-            arg[i + 1] = (char *) ctx->arguments()[i]->getText().c_str();
-        }
-        arg[ctx->arguments().size() + 1] = NULL;
-
-        execvp(arg[0], arg);
-
-        exit(-1);
-    }
-    return nullptr;
-}

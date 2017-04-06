@@ -10,20 +10,12 @@ getDir
 getDir: 'pwd';
 changeDir: 'cd' (' ' dirPath=path)?;
 
-execCommands: 'execvp' ' ' file=programName (' ' arg=arguments)*;
-ioCommands: inputCommand
-| outputCommand
-| errorCommand;
-
-inputCommand: 'execvp' ' ' file=programName (' ' arg=arguments)* ' < ' inputfile=input;
-outputCommand: 'execvp' ' ' file=programName (' ' arg=arguments)* op=(' > ' | ' >> ') outputfile=output;
-errorCommand: 'execvp' ' ' file=programName (' ' arg=arguments)* ' < ' inputfile=input ' 2> ' errorfile=error op=(' > ' | ' >> ') outputfile=output;
+execCommands: 'execvp' ' ' file=programName (' ' arg=arguments)* ;
+ioCommands: 'execvp' ' ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)?;
 
 path: dirName+ | '..';
 
-input: STRING '.' STRING;
-output: STRING '.' STRING;
-error: STRING '.' STRING;
+fileName: STRING '.' STRING;
 
 arguments: STRING;
 dirName: STRING | '/';

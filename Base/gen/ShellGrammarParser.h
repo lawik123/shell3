@@ -19,9 +19,8 @@ public:
 
   enum {
     RuleProgram = 0, RuleDirCommands = 1, RuleGetDir = 2, RuleChangeDir = 3, 
-    RuleExecCommands = 4, RuleIoCommands = 5, RuleInputCommand = 6, RuleOutputCommand = 7, 
-    RuleErrorCommand = 8, RulePath = 9, RuleInput = 10, RuleOutput = 11, 
-    RuleError = 12, RuleArguments = 13, RuleDirName = 14, RuleProgramName = 15
+    RuleExecCommands = 4, RuleIoCommands = 5, RulePath = 6, RuleFileName = 7, 
+    RuleArguments = 8, RuleDirName = 9, RuleProgramName = 10
   };
 
   ShellGrammarParser(antlr4::TokenStream *input);
@@ -40,13 +39,8 @@ public:
   class ChangeDirContext;
   class ExecCommandsContext;
   class IoCommandsContext;
-  class InputCommandContext;
-  class OutputCommandContext;
-  class ErrorCommandContext;
   class PathContext;
-  class InputContext;
-  class OutputContext;
-  class ErrorContext;
+  class FileNameContext;
   class ArgumentsContext;
   class DirNameContext;
   class ProgramNameContext; 
@@ -120,77 +114,27 @@ public:
 
   class  IoCommandsContext : public antlr4::ParserRuleContext {
   public:
+    ShellGrammarParser::ProgramNameContext *file = nullptr;;
+    ShellGrammarParser::ArgumentsContext *arg = nullptr;;
+    antlr4::Token *inOp = nullptr;;
+    ShellGrammarParser::FileNameContext *inputfile = nullptr;;
+    antlr4::Token *errOp = nullptr;;
+    ShellGrammarParser::FileNameContext *errorfile = nullptr;;
+    antlr4::Token *outOp = nullptr;;
+    ShellGrammarParser::FileNameContext *outputfile = nullptr;;
     IoCommandsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    InputCommandContext *inputCommand();
-    OutputCommandContext *outputCommand();
-    ErrorCommandContext *errorCommand();
+    ProgramNameContext *programName();
+    std::vector<ArgumentsContext *> arguments();
+    ArgumentsContext* arguments(size_t i);
+    std::vector<FileNameContext *> fileName();
+    FileNameContext* fileName(size_t i);
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
   };
 
   IoCommandsContext* ioCommands();
-
-  class  InputCommandContext : public antlr4::ParserRuleContext {
-  public:
-    ShellGrammarParser::ProgramNameContext *file = nullptr;;
-    ShellGrammarParser::ArgumentsContext *arg = nullptr;;
-    ShellGrammarParser::InputContext *inputfile = nullptr;;
-    InputCommandContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ProgramNameContext *programName();
-    InputContext *input();
-    std::vector<ArgumentsContext *> arguments();
-    ArgumentsContext* arguments(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  InputCommandContext* inputCommand();
-
-  class  OutputCommandContext : public antlr4::ParserRuleContext {
-  public:
-    ShellGrammarParser::ProgramNameContext *file = nullptr;;
-    ShellGrammarParser::ArgumentsContext *arg = nullptr;;
-    antlr4::Token *op = nullptr;;
-    ShellGrammarParser::OutputContext *outputfile = nullptr;;
-    OutputCommandContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ProgramNameContext *programName();
-    OutputContext *output();
-    std::vector<ArgumentsContext *> arguments();
-    ArgumentsContext* arguments(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  OutputCommandContext* outputCommand();
-
-  class  ErrorCommandContext : public antlr4::ParserRuleContext {
-  public:
-    ShellGrammarParser::ProgramNameContext *file = nullptr;;
-    ShellGrammarParser::ArgumentsContext *arg = nullptr;;
-    ShellGrammarParser::InputContext *inputfile = nullptr;;
-    ShellGrammarParser::ErrorContext *errorfile = nullptr;;
-    antlr4::Token *op = nullptr;;
-    ShellGrammarParser::OutputContext *outputfile = nullptr;;
-    ErrorCommandContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ProgramNameContext *programName();
-    InputContext *input();
-    ErrorContext *error();
-    OutputContext *output();
-    std::vector<ArgumentsContext *> arguments();
-    ArgumentsContext* arguments(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ErrorCommandContext* errorCommand();
 
   class  PathContext : public antlr4::ParserRuleContext {
   public:
@@ -205,9 +149,9 @@ public:
 
   PathContext* path();
 
-  class  InputContext : public antlr4::ParserRuleContext {
+  class  FileNameContext : public antlr4::ParserRuleContext {
   public:
-    InputContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    FileNameContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     std::vector<antlr4::tree::TerminalNode *> STRING();
     antlr4::tree::TerminalNode* STRING(size_t i);
@@ -216,33 +160,7 @@ public:
    
   };
 
-  InputContext* input();
-
-  class  OutputContext : public antlr4::ParserRuleContext {
-  public:
-    OutputContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<antlr4::tree::TerminalNode *> STRING();
-    antlr4::tree::TerminalNode* STRING(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  OutputContext* output();
-
-  class  ErrorContext : public antlr4::ParserRuleContext {
-  public:
-    ErrorContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<antlr4::tree::TerminalNode *> STRING();
-    antlr4::tree::TerminalNode* STRING(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ErrorContext* error();
+  FileNameContext* fileName();
 
   class  ArgumentsContext : public antlr4::ParserRuleContext {
   public:

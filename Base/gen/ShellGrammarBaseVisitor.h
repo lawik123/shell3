@@ -39,31 +39,11 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitInputCommand(ShellGrammarParser::InputCommandContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitOutputCommand(ShellGrammarParser::OutputCommandContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitErrorCommand(ShellGrammarParser::ErrorCommandContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitPath(ShellGrammarParser::PathContext *ctx) override {
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitInput(ShellGrammarParser::InputContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitOutput(ShellGrammarParser::OutputContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
-  virtual antlrcpp::Any visitError(ShellGrammarParser::ErrorContext *ctx) override {
+  virtual antlrcpp::Any visitFileName(ShellGrammarParser::FileNameContext *ctx) override {
     return visitChildren(ctx);
   }
 
