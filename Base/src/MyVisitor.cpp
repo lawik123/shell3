@@ -56,9 +56,6 @@ antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ct
 antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) {
     int cid = fork();
 
-
-
-
     if (cid == 0) {
         if(ctx->inOp != nullptr) {
             int in = open(ctx->inputfile->getText().c_str(), O_RDONLY);
@@ -112,5 +109,83 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
         printf("Error in fork()");
     }
     return ShellGrammarBaseVisitor::visitIoCommands(ctx);
+}
+
+antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsContext *ctx) {
+    int p[2];
+    pipe(p);
+    int cid = fork();
+
+    if(cid == 0) {
+        dup2(p[0], 0);
+        close(p[0]);
+        close(p[1]);
+
+        if(ctx->pipe().size() > 1) {
+            for (int i = 0; i < ctx->pipe().size(); i++) {
+                int p2[2];
+                pipe(p2);
+
+                int cid2 = fork();
+
+                if (cid2 == 0) {
+                    dup2(p2[0], 0);
+                    close(p2[0]);
+                    close(p2[1]);
+                    std::string fileName = ctx->pipe()[i]->file->getText();
+                    char *arg[] = {(char *) fileName.c_str()};
+                    for (int j = 0; j < ctx->pipe()[i]->arguments().size(); j++) {
+                        arg[j + 1] = (char *) ctx->pipe()[i]->arguments()[j]->getText().c_str();
+                    }
+                    arg[ctx->pipe()[i]->arguments().size() + 1] = NULL;
+
+                    execvp(arg[0], arg);
+
+                } else {
+                    dup2(p2[1], 1);
+                    close(p2[0]);
+                    close(p2[1]);
+
+                    std::string fileName = ctx->pipe()[i]->file->getText();
+                    char *arg[] = {(char *) fileName.c_str()};
+                    for (int j = 0; j < ctx->pipe()[i]->arguments().size(); j++) {
+                        arg[j + 1] = (char *) ctx->pipe()[i]->arguments()[j]->getText().c_str();
+                    }
+                    arg[ctx->pipe()[i]->arguments().size() + 1] = NULL;
+
+                    execvp(arg[0], arg);
+
+                }
+            }
+        } else {
+            std::string fileName = ctx->pipe()[0]->file->getText();
+            char *arg[] = {(char *) fileName.c_str()};
+            for (int i = 0; i < ctx->pipe()[0]->arguments().size(); i++) {
+                arg[i + 1] = (char *) ctx->pipe()[0]->arguments()[i]->getText().c_str();
+            }
+            arg[ctx->pipe()[0]->arguments().size() + 1] = NULL;
+
+            execvp(arg[0], arg);
+
+        }
+
+    } else {
+        dup2(p[1], 1);
+        close(p[0]);
+        close(p[1]);
+
+        std::string fileName = ctx->startFile->getText();
+        char *arg[] = {(char *) fileName.c_str()};
+        for (int j = 0; j < ctx->arguments().size(); j++) {
+            arg[j + 1] = (char *) ctx->arguments()[j]->getText().c_str();
+        }
+        arg[ctx->arguments().size() + 1] = NULL;
+
+        execvp(arg[0], arg);
+
+    }
+    exit(-1);
+
+    return ShellGrammarBaseVisitor::visitPipeCommands(ctx);
 }
 

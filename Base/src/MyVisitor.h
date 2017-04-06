@@ -22,6 +22,8 @@ public:
     antlrcpp::Any visitDirName(ShellGrammarParser::DirNameContext *ctx) override;
 
     antlrcpp::Any visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) override;
+
+    antlrcpp::Any visitPipeCommands(ShellGrammarParser::PipeCommandsContext *ctx) override;
 };
 
 
