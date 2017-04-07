@@ -14,9 +14,9 @@ path: dirName+ | '..';
 
 execCommands: 'execvp ' file=programName (' ' arg=arguments)* ;
 ioCommands: 'execvp ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)?;
-pipeCommands: 'execvp ' startFile=programName (' ' startArg=arguments)* pipe+;
+pipeCommands: 'execvp ' startFile=programName (' ' startArg=arguments)* pipeExpr+;
 
-pipe: ' | ' file=programName (' ' arg=arguments)*;
+pipeExpr: ' | ' file=programName (' ' arg=arguments)*;
 
 fileName: STRING '.' STRING;
 

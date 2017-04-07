@@ -547,12 +547,12 @@ ShellGrammarParser::ProgramNameContext* ShellGrammarParser::PipeCommandsContext:
   return getRuleContext<ShellGrammarParser::ProgramNameContext>(0);
 }
 
-std::vector<ShellGrammarParser::PipeContext *> ShellGrammarParser::PipeCommandsContext::pipe() {
-  return getRuleContexts<ShellGrammarParser::PipeContext>();
+std::vector<ShellGrammarParser::PipeExprContext *> ShellGrammarParser::PipeCommandsContext::pipeExpr() {
+  return getRuleContexts<ShellGrammarParser::PipeExprContext>();
 }
 
-ShellGrammarParser::PipeContext* ShellGrammarParser::PipeCommandsContext::pipe(size_t i) {
-  return getRuleContext<ShellGrammarParser::PipeContext>(i);
+ShellGrammarParser::PipeExprContext* ShellGrammarParser::PipeCommandsContext::pipeExpr(size_t i) {
+  return getRuleContext<ShellGrammarParser::PipeExprContext>(i);
 }
 
 std::vector<ShellGrammarParser::ArgumentsContext *> ShellGrammarParser::PipeCommandsContext::arguments() {
@@ -606,7 +606,7 @@ ShellGrammarParser::PipeCommandsContext* ShellGrammarParser::pipeCommands() {
     _la = _input->LA(1);
     do {
       setState(90);
-      pipe();
+      pipeExpr();
       setState(93); 
       _errHandler->sync(this);
       _la = _input->LA(1);
@@ -622,39 +622,39 @@ ShellGrammarParser::PipeCommandsContext* ShellGrammarParser::pipeCommands() {
   return _localctx;
 }
 
-//----------------- PipeContext ------------------------------------------------------------------
+//----------------- PipeExprContext ------------------------------------------------------------------
 
-ShellGrammarParser::PipeContext::PipeContext(ParserRuleContext *parent, size_t invokingState)
+ShellGrammarParser::PipeExprContext::PipeExprContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
 }
 
-ShellGrammarParser::ProgramNameContext* ShellGrammarParser::PipeContext::programName() {
+ShellGrammarParser::ProgramNameContext* ShellGrammarParser::PipeExprContext::programName() {
   return getRuleContext<ShellGrammarParser::ProgramNameContext>(0);
 }
 
-std::vector<ShellGrammarParser::ArgumentsContext *> ShellGrammarParser::PipeContext::arguments() {
+std::vector<ShellGrammarParser::ArgumentsContext *> ShellGrammarParser::PipeExprContext::arguments() {
   return getRuleContexts<ShellGrammarParser::ArgumentsContext>();
 }
 
-ShellGrammarParser::ArgumentsContext* ShellGrammarParser::PipeContext::arguments(size_t i) {
+ShellGrammarParser::ArgumentsContext* ShellGrammarParser::PipeExprContext::arguments(size_t i) {
   return getRuleContext<ShellGrammarParser::ArgumentsContext>(i);
 }
 
 
-size_t ShellGrammarParser::PipeContext::getRuleIndex() const {
-  return ShellGrammarParser::RulePipe;
+size_t ShellGrammarParser::PipeExprContext::getRuleIndex() const {
+  return ShellGrammarParser::RulePipeExpr;
 }
 
-antlrcpp::Any ShellGrammarParser::PipeContext::accept(tree::ParseTreeVisitor *visitor) {
+antlrcpp::Any ShellGrammarParser::PipeExprContext::accept(tree::ParseTreeVisitor *visitor) {
   if (auto parserVisitor = dynamic_cast<ShellGrammarVisitor*>(visitor))
-    return parserVisitor->visitPipe(this);
+    return parserVisitor->visitPipeExpr(this);
   else
     return visitor->visitChildren(this);
 }
 
-ShellGrammarParser::PipeContext* ShellGrammarParser::pipe() {
-  PipeContext *_localctx = _tracker.createInstance<PipeContext>(_ctx, getState());
-  enterRule(_localctx, 16, ShellGrammarParser::RulePipe);
+ShellGrammarParser::PipeExprContext* ShellGrammarParser::pipeExpr() {
+  PipeExprContext *_localctx = _tracker.createInstance<PipeExprContext>(_ctx, getState());
+  enterRule(_localctx, 16, ShellGrammarParser::RulePipeExpr);
   size_t _la = 0;
 
   auto onExit = finally([=] {
@@ -665,7 +665,7 @@ ShellGrammarParser::PipeContext* ShellGrammarParser::pipe() {
     setState(95);
     match(ShellGrammarParser::T__9);
     setState(96);
-    dynamic_cast<PipeContext *>(_localctx)->file = programName();
+    dynamic_cast<PipeExprContext *>(_localctx)->file = programName();
     setState(101);
     _errHandler->sync(this);
     _la = _input->LA(1);
@@ -673,7 +673,7 @@ ShellGrammarParser::PipeContext* ShellGrammarParser::pipe() {
       setState(97);
       match(ShellGrammarParser::T__2);
       setState(98);
-      dynamic_cast<PipeContext *>(_localctx)->arg = arguments();
+      dynamic_cast<PipeExprContext *>(_localctx)->arg = arguments();
       setState(103);
       _errHandler->sync(this);
       _la = _input->LA(1);
@@ -970,7 +970,7 @@ std::vector<uint16_t> ShellGrammarParser::_serializedATN;
 
 std::vector<std::string> ShellGrammarParser::_ruleNames = {
   "program", "dirCommands", "getDir", "changeDir", "path", "execCommands", 
-  "ioCommands", "pipeCommands", "pipe", "fileName", "arguments", "dirName", 
+  "ioCommands", "pipeCommands", "pipeExpr", "fileName", "arguments", "dirName", 
   "programName"
 };
 

@@ -47,7 +47,7 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitPipe(ShellGrammarParser::PipeContext *ctx) override {
+  virtual antlrcpp::Any visitPipeExpr(ShellGrammarParser::PipeExprContext *ctx) override {
     return visitChildren(ctx);
   }
 

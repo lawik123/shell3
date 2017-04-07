@@ -20,7 +20,7 @@ public:
   enum {
     RuleProgram = 0, RuleDirCommands = 1, RuleGetDir = 2, RuleChangeDir = 3, 
     RulePath = 4, RuleExecCommands = 5, RuleIoCommands = 6, RulePipeCommands = 7, 
-    RulePipe = 8, RuleFileName = 9, RuleArguments = 10, RuleDirName = 11, 
+    RulePipeExpr = 8, RuleFileName = 9, RuleArguments = 10, RuleDirName = 11, 
     RuleProgramName = 12
   };
 
@@ -42,7 +42,7 @@ public:
   class ExecCommandsContext;
   class IoCommandsContext;
   class PipeCommandsContext;
-  class PipeContext;
+  class PipeExprContext;
   class FileNameContext;
   class ArgumentsContext;
   class DirNameContext;
@@ -160,8 +160,8 @@ public:
     PipeCommandsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
-    std::vector<PipeContext *> pipe();
-    PipeContext* pipe(size_t i);
+    std::vector<PipeExprContext *> pipeExpr();
+    PipeExprContext* pipeExpr(size_t i);
     std::vector<ArgumentsContext *> arguments();
     ArgumentsContext* arguments(size_t i);
 
@@ -171,11 +171,11 @@ public:
 
   PipeCommandsContext* pipeCommands();
 
-  class  PipeContext : public antlr4::ParserRuleContext {
+  class  PipeExprContext : public antlr4::ParserRuleContext {
   public:
     ShellGrammarParser::ProgramNameContext *file = nullptr;;
     ShellGrammarParser::ArgumentsContext *arg = nullptr;;
-    PipeContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    PipeExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
     std::vector<ArgumentsContext *> arguments();
@@ -185,7 +185,7 @@ public:
    
   };
 
-  PipeContext* pipe();
+  PipeExprContext* pipeExpr();
 
   class  FileNameContext : public antlr4::ParserRuleContext {
   public:

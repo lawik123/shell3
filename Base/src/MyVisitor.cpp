@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <fcntl.h>
+#include <wait.h>
 #include "MyVisitor.h"
 
 antlrcpp::Any MyVisitor::visitProgram(ShellGrammarParser::ProgramContext *ctx) {
@@ -112,85 +113,93 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
 }
 
 antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsContext *ctx) {
-    int pid = fork();
-    if(pid == 0) {
+    pid_t pid[ctx->pipeExpr().size() + 1];
+    int n;
+    std::map<std::string, int*> pipes;
+    std::string startName = "0p1";
+    int s[2];
+    pipes[startName] = s;
+    pipe(pipes[startName]);
+
+    for(int i = 1; i < ctx->pipeExpr().size(); i++) {
+        int first = i;
+        int second = i + 1;
+        std::string pstring = "p";
+
+        std::string name = std::to_string(first) + pstring + std::to_string(second);
         int p[2];
-        pipe(p);
-        int cid = fork();
+        pipes[name] = p;
+        pipe(pipes[name]);
+    }
 
-        if (cid != 0) {
-            dup2(p[0], 0);
-            close(p[1]);
-            close(p[0]);
+    pid[0] = fork();
+    if(pid[0]== 0) {
+        dup2(pipes["0p1"][1], STDOUT_FILENO);
 
-            if (ctx->pipe().size() > 1) {
-                for (int i = 0; i < ctx->pipe().size(); i++) {
-                    int p2[2];
-                    pipe(p2);
+        for(std::map<std::string, int*>::iterator j = pipes.begin(); j != pipes.end(); j++) {
+            close(j->second[0]);
+            close(j->second[1]);
+        }
 
-                    int cid2 = fork();
+        std::string fileName = ctx->startFile->getText();
+        char *arg[] = {(char *) fileName.c_str()};
+        for (int j = 0; j < ctx->arguments().size(); j++) {
+            arg[j + 1] = (char *) ctx->arguments()[j]->getText().c_str();
+        }
+        arg[ctx->arguments().size() + 1] = NULL;
 
-                    if (cid2 != 0) {
-                        dup2(p2[0], 0);
-                        close(p2[1]);
-                        close(p2[0]);
-                        std::string fileName = ctx->pipe()[i]->file->getText();
-                        char *arg[] = {(char *) fileName.c_str()};
-                        for (int j = 0; j < ctx->pipe()[i]->arguments().size(); j++) {
-                            arg[j + 1] = (char *) ctx->pipe()[i]->arguments()[j]->getText().c_str();
-                        }
-                        arg[ctx->pipe()[i]->arguments().size() + 1] = NULL;
+        execvp(arg[0], arg);
 
-                        execvp(arg[0], arg);
+        exit(0);
+    }
 
-                    } else {
-                        dup2(p2[1], 1);
-                        close(p2[0]);
-                        close(p2[1]);
+    for (int i = 1; i < ctx->pipeExpr().size() + 1; i++) {
+        pid[i] = fork();
+        if(pid[i]== 0) {
+            int first = i-1;
+            int second = i;
+            int third = i + 1;
+            std::string p = "p";
 
-                        std::string fileName = ctx->pipe()[i]->file->getText();
-                        char *arg[] = {(char *) fileName.c_str()};
-                        for (int j = 0; j < ctx->pipe()[i]->arguments().size(); j++) {
-                            arg[j + 1] = (char *) ctx->pipe()[i]->arguments()[j]->getText().c_str();
-                        }
-                        arg[ctx->pipe()[i]->arguments().size() + 1] = NULL;
+            std::string inpipeName = std::to_string(first) + p + std::to_string(second);
+            std::string outpipeName =  std::to_string(second) + p + std::to_string(third);
 
-                        execvp(arg[0], arg);
-
-                    }
-                }
-            } else {
-                std::string fileName = ctx->pipe()[0]->file->getText();
-                char *arg[] = {(char *) fileName.c_str()};
-                for (int i = 0; i < ctx->pipe()[0]->arguments().size(); i++) {
-                    arg[i + 1] = (char *) ctx->pipe()[0]->arguments()[i]->getText().c_str();
-                }
-                arg[ctx->pipe()[0]->arguments().size() + 1] = NULL;
-
-                execvp(arg[0], arg);
-
+            dup2(pipes[inpipeName][0], STDIN_FILENO);
+            std::cout << i << inpipeName << std::endl;
+            if(i < ctx->pipeExpr().size()) {
+                dup2(pipes[outpipeName][1], STDOUT_FILENO);
+                std::cout << i << "out" << outpipeName << std::endl;
             }
 
-        } else {
-            dup2(p[1], 1);
-            close(p[0]);
-            close(p[1]);
+            for (std::map<std::string, int*>::iterator x = pipes.begin(); x != pipes.end(); x++) {
+                close(x->second[0]);
+                close(x->second[1]);
+            }
 
-            std::string fileName = ctx->startFile->getText();
+            std::string fileName = ctx->pipeExpr()[i - 1]->file->getText();
+
             char *arg[] = {(char *) fileName.c_str()};
-            for (int j = 0; j < ctx->arguments().size(); j++) {
-                arg[j + 1] = (char *) ctx->arguments()[j]->getText().c_str();
+
+            for (int z = 0; z < ctx->pipeExpr()[i-1]->arguments().size(); z++) {
+                arg[z + 1] = (char *) ctx->pipeExpr()[i-1]->arguments()[z]->getText().c_str();
+                std::cout << i << (char *) ctx->pipeExpr()[i-1]->arguments()[z]->getText().c_str() << std::endl;
             }
-            arg[ctx->arguments().size() + 1] = NULL;
+            arg[ctx->pipeExpr()[i-1]->arguments().size() + 1] = NULL;
 
             execvp(arg[0], arg);
 
+            exit(0);
         }
-    } else if (pid > 0) {
-        //parent do nothing
+    }
 
-    } else {
-        printf("Error in fork()");
+    for (std::map<std::string, int*>::iterator x = pipes.begin(); x != pipes.end(); x++) {
+        close(x->second[0]);
+        close(x->second[1]);
+    }
+
+    for(n = 0; n < ctx->pipeExpr().size(); n++) {
+        int status;
+        waitpid(pid[n], &status, 0);
     }
 
     return ShellGrammarBaseVisitor::visitPipeCommands(ctx);
