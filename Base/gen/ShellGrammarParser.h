@@ -1,5 +1,5 @@
 
-// Generated from /home/l/Desktop/shell3/Base/ShellGrammar.g4 by ANTLR 4.6
+// Generated from /home/lars/Desktop/test/shell3/Base/ShellGrammar.g4 by ANTLR 4.6
 
 #pragma once
 
@@ -157,6 +157,12 @@ public:
   public:
     ShellGrammarParser::ProgramNameContext *startFile = nullptr;;
     ShellGrammarParser::ArgumentsContext *startArg = nullptr;;
+    antlr4::Token *inOp = nullptr;;
+    ShellGrammarParser::FileNameContext *inputfile = nullptr;;
+    antlr4::Token *errOp = nullptr;;
+    ShellGrammarParser::FileNameContext *errorfile = nullptr;;
+    antlr4::Token *outOp = nullptr;;
+    ShellGrammarParser::FileNameContext *outputfile = nullptr;;
     PipeCommandsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
@@ -164,6 +170,8 @@ public:
     PipeExprContext* pipeExpr(size_t i);
     std::vector<ArgumentsContext *> arguments();
     ArgumentsContext* arguments(size_t i);
+    std::vector<FileNameContext *> fileName();
+    FileNameContext* fileName(size_t i);
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    
@@ -175,11 +183,19 @@ public:
   public:
     ShellGrammarParser::ProgramNameContext *file = nullptr;;
     ShellGrammarParser::ArgumentsContext *arg = nullptr;;
+    antlr4::Token *inOp = nullptr;;
+    ShellGrammarParser::FileNameContext *inputfile = nullptr;;
+    antlr4::Token *errOp = nullptr;;
+    ShellGrammarParser::FileNameContext *errorfile = nullptr;;
+    antlr4::Token *outOp = nullptr;;
+    ShellGrammarParser::FileNameContext *outputfile = nullptr;;
     PipeExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
     std::vector<ArgumentsContext *> arguments();
     ArgumentsContext* arguments(size_t i);
+    std::vector<FileNameContext *> fileName();
+    FileNameContext* fileName(size_t i);
 
     virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
    

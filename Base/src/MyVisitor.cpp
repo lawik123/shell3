@@ -140,6 +140,41 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                 }
 
                 if (i == 0) {
+                    if(ctx->inOp != nullptr) {
+                        int in = open(ctx->inputfile->getText().c_str(), O_RDONLY);
+                        if (in == -1) {
+                            perror("error");
+                            return EXIT_FAILURE;
+                        }
+                        dup2(in, STDIN_FILENO);
+                        close(in);
+                    }
+
+                    if(ctx->errOp != nullptr) {
+                        int err = open(ctx->errorfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
+                        if (err == -1) {
+                            perror("error");
+                            return EXIT_FAILURE;
+                        }
+                        dup2(err, STDERR_FILENO);
+                        close(err);
+                    }
+
+                    if(ctx->outOp != nullptr) {
+                        int out;
+                        if (ctx->outOp->getText() == " > ") {
+                            out = open(ctx->outputfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
+                        } else {
+                            out = open(ctx->outputfile->getText().c_str(), O_APPEND | O_WRONLY, 0777);
+                        }
+                        if (out == -1) {
+                            perror("error");
+                            return EXIT_FAILURE;
+                        }
+                        dup2(out, STDOUT_FILENO);
+                        close(out);
+                    }
+
                     std::string fileName = ctx->startFile->getText();
                     char *arg[] = {(char *) fileName.c_str()};
                     for (int k = 0; k < ctx->arguments().size(); k++) {
@@ -148,6 +183,40 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                     arg[ctx->arguments().size() + 1] = NULL;
                     execvp(arg[0], arg);
                 } else {
+                    if(ctx->pipeExpr()[i-1]->inOp != nullptr) {
+                        int in = open(ctx->pipeExpr()[i-1]->inputfile->getText().c_str(), O_RDONLY);
+                        if (in == -1) {
+                            perror("error");
+                            return EXIT_FAILURE;
+                        }
+                        dup2(in, STDIN_FILENO);
+                        close(in);
+                    }
+
+                    if(ctx->pipeExpr()[i-1]->errOp != nullptr) {
+                        int err = open(ctx->pipeExpr()[i-1]->errorfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
+                        if (err == -1) {
+                            perror("error");
+                            return EXIT_FAILURE;
+                        }
+                        dup2(err, STDERR_FILENO);
+                        close(err);
+                    }
+
+                    if(ctx->pipeExpr()[i-1]->outOp != nullptr) {
+                        int out;
+                        if (ctx->pipeExpr()[i-1]->outOp->getText() == " > ") {
+                            out = open(ctx->pipeExpr()[i-1]->outputfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
+                        } else {
+                            out = open(ctx->pipeExpr()[i-1]->outputfile->getText().c_str(), O_APPEND | O_WRONLY, 0777);
+                        }
+                        if (out == -1) {
+                            perror("error");
+                            return EXIT_FAILURE;
+                        }
+                        dup2(out, STDOUT_FILENO);
+                        close(out);
+                    }
                     std::string fileName = ctx->pipeExpr(i-1)->file->getText();
                     char *arg[] = {(char *) fileName.c_str()};
                     for (int k = 0; k < ctx->pipeExpr(i-1)->arguments().size(); k++) {
