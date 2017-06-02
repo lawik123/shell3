@@ -3,6 +3,7 @@
 #include <pwd.h>
 #include <fcntl.h>
 #include <wait.h>
+#include <cstring>
 #include "MyVisitor.h"
 
 antlrcpp::Any MyVisitor::visitProgram(ShellGrammarParser::ProgramContext *ctx) {
@@ -33,8 +34,19 @@ antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ct
     return ShellGrammarBaseVisitor::visitChangeDir(ctx);
 }
 
+void childSignalHandler(int signum) {
+
+}
+
 antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) {
+
+    bool backgroundproces = false;
+    signal(SIGCHLD, childSignalHandler);
     int cid = fork();
+    int status;
+    if (strcmp(ctx->backgroundvalidator->getText(), "&") == 0) {
+        backgroundproces = true;
+    }
 
     if (cid == 0) {
         if(ctx->inOp != nullptr) {
@@ -72,6 +84,8 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
             close(out);
         }
 
+
+
         std::string fileName = ctx->file->getText();
         char *arg[] = {(char *) fileName.c_str()};
         for (int i = 0; i < ctx->arguments().size(); i++) {
@@ -84,7 +98,12 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
         exit(-1);
     } else if (cid > 0) {
         //parent do nothing
-
+        if(backgroundproces) {
+            cid = waitpid(cid, &status, 0);
+            if(cid > 0) {
+                printf("waitpid reaped child pid %d\n", cid);
+            }
+        }
     } else {
         printf("Error in fork()");
     }

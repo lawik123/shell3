@@ -13,10 +13,10 @@ changeDir: 'cd' (' ' dirPath=path)?;
 path: dirName+ | '..';
 
 
-ioCommands: 'execvp ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)?;
+ioCommands: 'execvp ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? (backgroundvalidator='&')?;
 pipeCommands: 'execvp ' startFile=programName (' ' startArg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? pipeExpr+;
 
-pipeExpr: ' | ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)?;
+pipeExpr: ' | ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? (backgroundvalidator='&')?;
 
 fileName: STRING '.' STRING;
 

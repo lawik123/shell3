@@ -13,8 +13,8 @@ class  ShellGrammarParser : public antlr4::Parser {
 public:
   enum {
     T__0 = 1, T__1 = 2, T__2 = 3, T__3 = 4, T__4 = 5, T__5 = 6, T__6 = 7, 
-    T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, STRING = 14, 
-    WS = 15
+    T__7 = 8, T__8 = 9, T__9 = 10, T__10 = 11, T__11 = 12, T__12 = 13, T__13 = 14, 
+    STRING = 15, WS = 16
   };
 
   enum {
@@ -120,6 +120,7 @@ public:
     ShellGrammarParser::FileNameContext *errorfile = nullptr;;
     antlr4::Token *outOp = nullptr;;
     ShellGrammarParser::FileNameContext *outputfile = nullptr;;
+    antlr4::Token *backgroundvalidator = nullptr;;
     IoCommandsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
@@ -170,6 +171,7 @@ public:
     ShellGrammarParser::FileNameContext *errorfile = nullptr;;
     antlr4::Token *outOp = nullptr;;
     ShellGrammarParser::FileNameContext *outputfile = nullptr;;
+    antlr4::Token *backgroundvalidator = nullptr;;
     PipeExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
