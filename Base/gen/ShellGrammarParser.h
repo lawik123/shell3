@@ -19,9 +19,8 @@ public:
 
   enum {
     RuleProgram = 0, RuleDirCommands = 1, RuleGetDir = 2, RuleChangeDir = 3, 
-    RulePath = 4, RuleExecCommands = 5, RuleIoCommands = 6, RulePipeCommands = 7, 
-    RulePipeExpr = 8, RuleFileName = 9, RuleArguments = 10, RuleDirName = 11, 
-    RuleProgramName = 12
+    RulePath = 4, RuleIoCommands = 5, RulePipeCommands = 6, RulePipeExpr = 7, 
+    RuleFileName = 8, RuleArguments = 9, RuleDirName = 10, RuleProgramName = 11
   };
 
   ShellGrammarParser(antlr4::TokenStream *input);
@@ -39,7 +38,6 @@ public:
   class GetDirContext;
   class ChangeDirContext;
   class PathContext;
-  class ExecCommandsContext;
   class IoCommandsContext;
   class PipeCommandsContext;
   class PipeExprContext;
@@ -53,7 +51,6 @@ public:
     ProgramContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     DirCommandsContext *dirCommands();
-    ExecCommandsContext *execCommands();
     IoCommandsContext *ioCommands();
     PipeCommandsContext *pipeCommands();
 
@@ -112,22 +109,6 @@ public:
   };
 
   PathContext* path();
-
-  class  ExecCommandsContext : public antlr4::ParserRuleContext {
-  public:
-    ShellGrammarParser::ProgramNameContext *file = nullptr;;
-    ShellGrammarParser::ArgumentsContext *arg = nullptr;;
-    ExecCommandsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    ProgramNameContext *programName();
-    std::vector<ArgumentsContext *> arguments();
-    ArgumentsContext* arguments(size_t i);
-
-    virtual antlrcpp::Any accept(antlr4::tree::ParseTreeVisitor *visitor) override;
-   
-  };
-
-  ExecCommandsContext* execCommands();
 
   class  IoCommandsContext : public antlr4::ParserRuleContext {
   public:

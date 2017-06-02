@@ -25,28 +25,7 @@ antlrcpp::Any MyVisitor::visitDirName(ShellGrammarParser::DirNameContext *ctx) {
     return ctx->getText();
 }
 
-//execute commands
-antlrcpp::Any MyVisitor::visitExecCommands(ShellGrammarParser::ExecCommandsContext *ctx) {
-    int cid = fork();
-
-    if (cid == 0) {
-        std::string fileName = ctx->file->getText();
-        char *arg[] = {(char *) fileName.c_str()};
-        for (int i = 0; i < ctx->arguments().size(); i++) {
-            arg[i + 1] = (char *) ctx->arguments()[i]->getText().c_str();
-        }
-        arg[ctx->arguments().size() + 1] = NULL;
-        execvp(arg[0], arg);
-    } else if (cid > 0) {
-
-    } else {
-        printf("Error in fork()");
-    }
-    return nullptr;
-}
-
 //IO commands
-
 antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ctx) {
     std::string path = ctx->dirPath->getText();
     chdir(path.c_str());

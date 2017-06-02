@@ -35,10 +35,6 @@ public:
     return visitChildren(ctx);
   }
 
-  virtual antlrcpp::Any visitExecCommands(ShellGrammarParser::ExecCommandsContext *ctx) override {
-    return visitChildren(ctx);
-  }
-
   virtual antlrcpp::Any visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) override {
     return visitChildren(ctx);
   }

@@ -29,8 +29,6 @@ public:
 
     virtual antlrcpp::Any visitPath(ShellGrammarParser::PathContext *context) = 0;
 
-    virtual antlrcpp::Any visitExecCommands(ShellGrammarParser::ExecCommandsContext *context) = 0;
-
     virtual antlrcpp::Any visitIoCommands(ShellGrammarParser::IoCommandsContext *context) = 0;
 
     virtual antlrcpp::Any visitPipeCommands(ShellGrammarParser::PipeCommandsContext *context) = 0;

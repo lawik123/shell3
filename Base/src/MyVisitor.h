@@ -16,8 +16,6 @@ public:
 
     antlrcpp::Any visitGetDir(ShellGrammarParser::GetDirContext *ctx) override;
 
-    antlrcpp::Any visitExecCommands(ShellGrammarParser::ExecCommandsContext *ctx) override;
-
     antlrcpp::Any visitChangeDir(ShellGrammarParser::ChangeDirContext *ctx) override;
 
     antlrcpp::Any visitDirName(ShellGrammarParser::DirNameContext *ctx) override;

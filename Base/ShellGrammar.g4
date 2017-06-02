@@ -1,6 +1,6 @@
 grammar ShellGrammar;
 
-program: dirCommands|execCommands|ioCommands | pipeCommands;
+program: dirCommands|ioCommands | pipeCommands;
 
 dirCommands:
 getDir
@@ -12,7 +12,7 @@ changeDir: 'cd' (' ' dirPath=path)?;
 
 path: dirName+ | '..';
 
-execCommands: 'execvp ' file=programName (' ' arg=arguments)* ;
+
 ioCommands: 'execvp ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)?;
 pipeCommands: 'execvp ' startFile=programName (' ' startArg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? pipeExpr+;
 
