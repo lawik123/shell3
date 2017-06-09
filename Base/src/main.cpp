@@ -7,8 +7,7 @@
 #include "MyVisitor.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-
+    std::cout << "Welcome to shell \n" << std::endl;
     // Read some line of input....
     std::string input = "";
 

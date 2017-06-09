@@ -28,9 +28,12 @@ antlrcpp::Any MyVisitor::visitDirName(ShellGrammarParser::DirNameContext *ctx) {
 
 //IO commands
 antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ctx) {
-    std::string path = ctx->dirPath->getText();
-    chdir(path.c_str());
-
+    if(ctx->dirPath == nullptr) {
+        chdir(getenv("HOME"));
+    } else {
+        std::string path = ctx->dirPath->getText();
+        chdir(path.c_str());
+    }
     return ShellGrammarBaseVisitor::visitChangeDir(ctx);
 }
 
@@ -96,9 +99,6 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
         //parent do nothing
         if(!backgroundproces) {
             cid = waitpid(cid, &status, 0);
-            if(cid > 0) {
-                printf("waitpid reaped child pid %d\n", cid);
-            }
         }
     } else {
         printf("Error in fork()");
