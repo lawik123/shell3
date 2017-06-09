@@ -38,18 +38,22 @@ antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ct
 }
 
 antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) {
-
-    bool backgroundproces = false;
+    bool backgroundProcess = false;
+    //fork process
     int cid = fork();
     int status;
+
+    //check for background process
     if (ctx->backgroundvalidator != nullptr) {
-        backgroundproces = true;
+        backgroundProcess = true;
     }
 
     if (cid == 0) {
-        if(backgroundproces) {
+        //when background process add process to diffrent group
+        if(backgroundProcess) {
             setpgid(0,0);
         }
+        //get input file
         if(ctx->inOp != nullptr) {
             int in = open(ctx->inputfile->getText().c_str(), O_RDONLY);
             if (in == -1) {
@@ -59,7 +63,7 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
             dup2(in, STDIN_FILENO);
             close(in);
         }
-
+        //write error to error-output file
         if(ctx->errOp != nullptr) {
             int err = open(ctx->errorfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
             if (err == -1) {
@@ -70,6 +74,7 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
             close(err);
         }
 
+        //write output to output file
         if(ctx->outOp != nullptr) {
             int out;
             if (ctx->outOp->getText() == " > ") {
@@ -85,6 +90,7 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
             close(out);
         }
 
+        //execute program with arguments
         std::string fileName = ctx->file->getText();
         char *arg[] = {(char *) fileName.c_str()};
         for (int i = 0; i < ctx->arguments().size(); i++) {
@@ -96,8 +102,8 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
 
         exit(-1);
     } else if (cid > 0) {
-        //parent do nothing
-        if(!backgroundproces) {
+        //wait for children if no background process is running
+        if(!backgroundProcess) {
             cid = waitpid(cid, &status, 0);
         }
     } else {
@@ -110,27 +116,34 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
 
 
 antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsContext *ctx) {
-    bool backgroundproces = false;
+    bool backgroundProcess = false;
 
     int pipeSize = ctx->pipeExpr().size()+1;
+        //initialize pipes
         int pipes[pipeSize][2];
 
         for (int i = 0; i < pipeSize; i++) {
             pipe(pipes[i]);
         }
 
+        //check for background process
         if (ctx->backgroundvalidator != nullptr) {
-             backgroundproces = true;
+             backgroundProcess = true;
         }
 
         pid_t pid[pipeSize];
 
+
         for (int i = 0; i < pipeSize; i++) {
+            //fork proces
             pid[i] = fork();
             if (pid[i] == 0) {
-                if(backgroundproces) {
+                if(backgroundProcess) {
+                    //when background process add process to diffrent group
                     setpgid(pid[i],0);
                 }
+
+                //get in and output pipes when needed
                 if (i > 0) {
                     dup2(pipes[i][0], STDIN_FILENO);
                 }
@@ -142,6 +155,7 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                     close(pipes[j][1]);
                 }
 
+                //get input file
                 if (i == 0) {
                     if(ctx->inOp != nullptr) {
                         int in = open(ctx->inputfile->getText().c_str(), O_RDONLY);
@@ -153,6 +167,7 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                         close(in);
                     }
 
+                    //write error to error-output file
                     if(ctx->errOp != nullptr) {
                         int err = open(ctx->errorfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
                         if (err == -1) {
@@ -163,6 +178,7 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                         close(err);
                     }
 
+                    //write output to output file
                     if(ctx->outOp != nullptr) {
                         int out;
                         if (ctx->outOp->getText() == " > ") {
@@ -178,6 +194,7 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                         close(out);
                     }
 
+                    //execute program with arguments
                     std::string fileName = ctx->startFile->getText();
                     char *arg[] = {(char *) fileName.c_str()};
                     for (int k = 0; k < ctx->arguments().size(); k++) {
@@ -186,6 +203,7 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                     arg[ctx->arguments().size() + 1] = NULL;
                     execvp(arg[0], arg);
                 } else {
+                    //get input file
                     if(ctx->pipeExpr()[i-1]->inOp != nullptr) {
                         int in = open(ctx->pipeExpr()[i-1]->inputfile->getText().c_str(), O_RDONLY);
                         if (in == -1) {
@@ -196,6 +214,7 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                         close(in);
                     }
 
+                    //write error to error-output file
                     if(ctx->pipeExpr()[i-1]->errOp != nullptr) {
                         int err = open(ctx->pipeExpr()[i-1]->errorfile->getText().c_str(), O_CREAT | O_WRONLY, 0777);
                         if (err == -1) {
@@ -206,6 +225,7 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                         close(err);
                     }
 
+                    //write output to ouput file
                     if(ctx->pipeExpr()[i-1]->outOp != nullptr) {
                         int out;
                         if (ctx->pipeExpr()[i-1]->outOp->getText() == " > ") {
@@ -220,6 +240,9 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
                         dup2(out, STDOUT_FILENO);
                         close(out);
                     }
+
+
+                    //execute program with arguments
                     std::string fileName = ctx->pipeExpr(i-1)->file->getText();
                     char *arg[] = {(char *) fileName.c_str()};
                     for (int k = 0; k < ctx->pipeExpr(i-1)->arguments().size(); k++) {
@@ -236,21 +259,18 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
 
         }
 
+        //close all pipes
         for (int j = 0; j < pipeSize; j++) {
             close(pipes[j][0]);
             close(pipes[j][1]);
         }
-
+        //wait for children if no background process is running
         for (int j = 0; j < pipeSize; j++) {
-            if(!backgroundproces) {
+            if(!backgroundProcess) {
                 int status;
                 waitpid(pid[j], &status, 0);
             }
         }
-
-
-
-
 
     return ShellGrammarBaseVisitor::visitPipeCommands(ctx);
 }
