@@ -34,21 +34,19 @@ antlrcpp::Any MyVisitor::visitChangeDir(ShellGrammarParser::ChangeDirContext *ct
     return ShellGrammarBaseVisitor::visitChangeDir(ctx);
 }
 
-void childSignalHandler(int signum) {
-
-}
-
 antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *ctx) {
 
     bool backgroundproces = false;
-    signal(SIGCHLD, childSignalHandler);
     int cid = fork();
     int status;
-    if (strcmp(ctx->backgroundvalidator->getText(), "&") == 0) {
+    if (ctx->backgroundvalidator != nullptr) {
         backgroundproces = true;
     }
 
     if (cid == 0) {
+        if(backgroundproces) {
+            setpgid(0,0);
+        }
         if(ctx->inOp != nullptr) {
             int in = open(ctx->inputfile->getText().c_str(), O_RDONLY);
             if (in == -1) {
@@ -84,8 +82,6 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
             close(out);
         }
 
-
-
         std::string fileName = ctx->file->getText();
         char *arg[] = {(char *) fileName.c_str()};
         for (int i = 0; i < ctx->arguments().size(); i++) {
@@ -98,7 +94,7 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
         exit(-1);
     } else if (cid > 0) {
         //parent do nothing
-        if(backgroundproces) {
+        if(!backgroundproces) {
             cid = waitpid(cid, &status, 0);
             if(cid > 0) {
                 printf("waitpid reaped child pid %d\n", cid);
@@ -114,11 +110,17 @@ antlrcpp::Any MyVisitor::visitIoCommands(ShellGrammarParser::IoCommandsContext *
 
 
 antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsContext *ctx) {
-        int pipeSize = ctx->pipeExpr().size()+1;
+    bool backgroundproces = false;
+
+    int pipeSize = ctx->pipeExpr().size()+1;
         int pipes[pipeSize][2];
 
         for (int i = 0; i < pipeSize; i++) {
             pipe(pipes[i]);
+        }
+
+        if (ctx->backgroundvalidator != nullptr) {
+             backgroundproces = true;
         }
 
         pid_t pid[pipeSize];
@@ -126,6 +128,9 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
         for (int i = 0; i < pipeSize; i++) {
             pid[i] = fork();
             if (pid[i] == 0) {
+                if(backgroundproces) {
+                    setpgid(pid[i],0);
+                }
                 if (i > 0) {
                     dup2(pipes[i][0], STDIN_FILENO);
                 }
@@ -237,8 +242,10 @@ antlrcpp::Any MyVisitor::visitPipeCommands(ShellGrammarParser::PipeCommandsConte
         }
 
         for (int j = 0; j < pipeSize; j++) {
-            int status;
-            waitpid(pid[j], &status, 0);
+            if(!backgroundproces) {
+                int status;
+                waitpid(pid[j], &status, 0);
+            }
         }
 
 

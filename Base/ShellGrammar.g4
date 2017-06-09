@@ -13,10 +13,10 @@ changeDir: 'cd' (' ' dirPath=path)?;
 path: dirName+ | '..';
 
 
-ioCommands: 'execvp ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? (backgroundvalidator='&')?;
-pipeCommands: 'execvp ' startFile=programName (' ' startArg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? pipeExpr+;
+ioCommands: 'execvp ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? (backgroundvalidator=' &')?;
+pipeCommands: 'execvp ' startFile=programName (' ' startArg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? pipeExpr+ (backgroundvalidator=' &')?;
 
-pipeExpr: ' | ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)? (backgroundvalidator='&')?;
+pipeExpr: ' | ' file=programName (' ' arg=arguments)* (inOp=' < ' inputfile=fileName)? (errOp=' 2> ' errorfile=fileName)? (outOp=(' > ' | ' >> ') outputfile=fileName)?;
 
 fileName: STRING '.' STRING;
 

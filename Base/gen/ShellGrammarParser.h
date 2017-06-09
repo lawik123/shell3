@@ -145,6 +145,7 @@ public:
     ShellGrammarParser::FileNameContext *errorfile = nullptr;;
     antlr4::Token *outOp = nullptr;;
     ShellGrammarParser::FileNameContext *outputfile = nullptr;;
+    antlr4::Token *backgroundvalidator = nullptr;;
     PipeCommandsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
@@ -171,7 +172,6 @@ public:
     ShellGrammarParser::FileNameContext *errorfile = nullptr;;
     antlr4::Token *outOp = nullptr;;
     ShellGrammarParser::FileNameContext *outputfile = nullptr;;
-    antlr4::Token *backgroundvalidator = nullptr;;
     PipeExprContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramNameContext *programName();
